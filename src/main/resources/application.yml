@@ -3,8 +3,8 @@ chatgpt:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/maumdiary
-    username: maum_admin
+    url: jdbc:mysql://localhost:3306/MaumDiaryDB
+    username: MaumDiary_admin
     password: maumdiary123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
