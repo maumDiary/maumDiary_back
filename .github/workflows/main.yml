@@ -12,6 +12,10 @@ on:
   # 수동으로 해당 workflow 실행 지정
   workflow_dispatch:
 
+# 현재 스크립트에서 사용할 환경변수를 정의하여 사용
+env:
+  AWS_REGION: ap-northeast-2
+
 # workflow는 한개 이상의 job을 가지며, 각 job은 여러 step에 따라 단계를 나눌 수 있습니다.
 jobs:
   build:
