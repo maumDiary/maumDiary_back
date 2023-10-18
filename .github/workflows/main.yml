@@ -52,4 +52,4 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name $CODEDEPLOY_NAME --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $CODEDEPLOY_GROUP
+        run: aws deploy create-deployment --application-name github-actions --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $CODEDEPLOY_GROUP
