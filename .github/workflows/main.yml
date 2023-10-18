@@ -12,12 +12,6 @@ on:
   # 수동으로 해당 workflow 실행 지정
   workflow_dispatch:
 
-# codedeploy 환경 설정
-env:
-  AWS_REGION: ap-northeast-2
-  CODEDEPLOY_NAME: github-actions
-  CODEDEPLOY_GROUP: MaumDiary-github-actions-group
-
 # workflow는 한개 이상의 job을 가지며, 각 job은 여러 step에 따라 단계를 나눌 수 있습니다.
 jobs:
   build:
@@ -28,14 +22,8 @@ jobs:
     steps:
       # 작업에서 액세스할 수 있도록 $GITHUB_WORKSPACE에서 저장소를 체크아웃합니다.
       - name: Checkout
-        uses: maumDiary_back/checkout@v3
-        
-      - name: Setup JDK 17
-        uses: maumDiary_back/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          
+        uses: actions/checkout@v3
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
         shell: bash
@@ -43,17 +31,3 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
         shell: bash
-
-      - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
-        shell: bash
-      
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Code Deploy
-        run: aws deploy create-deployment --application-name $CODEDEPLOY_NAME --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $CODEDEPLOY_GROUP
