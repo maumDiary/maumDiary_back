@@ -1,6 +1,3 @@
-chatgpt:
-  api-key: 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
-
 spring:
   datasource:
     url: jdbc:mysql://maumdiary-db.cjzfjqrjkdm5.ap-northeast-2.rds.amazonaws.com:3306/MaumDiaryDB
@@ -22,3 +19,11 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  profiles:
+    include: API-KEY
+
+openai :
+  api-key: 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
+
+chat-gpt:
+  api-key: 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
