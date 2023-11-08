@@ -19,8 +19,8 @@ public class ChatGptResponseDto implements Serializable {
     private String object;
     private LocalDate created;
     private String model;
-    private Usage usage;
     private List<Choice> choices;
+    private Usage usage;
 
     @Getter
     @Setter
@@ -37,7 +37,7 @@ public class ChatGptResponseDto implements Serializable {
     @Setter
     public static class Choice {
         private int index;
-        private List<ChatGptMessage> messages;
+        private ChatGptMessage message;
         @JsonProperty("finish_reason")
         private String finishReason;
     }

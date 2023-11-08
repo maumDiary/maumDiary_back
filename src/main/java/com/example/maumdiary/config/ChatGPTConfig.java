@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 public class ChatGPTConfig {
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
-    @Value("&{chat-gpt.api-key}")
+    @Value("&{openai.api-key}")
     public static final String API_KEY = "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";
     public static final String MODEL = "gpt-3.5-turbo";
     public static final Integer MAX_TOKEN = 300;
