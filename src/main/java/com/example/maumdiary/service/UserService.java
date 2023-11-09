@@ -1,5 +1,6 @@
 package com.example.maumdiary.service;
 
+import com.example.maumdiary.dto.ChatDTO;
 import com.example.maumdiary.entity.Chat;
 import com.example.maumdiary.entity.ChatRepository;
 import com.example.maumdiary.entity.UserRepository;
@@ -37,10 +38,11 @@ public class UserService {
         return concatenatedContent.toString();
     }
 
-    public void saveChatContent(Long userId, String content) {
+    public ChatDTO saveChatContent(Long userId, String content) {
         LocalDateTime datetime = LocalDateTime.now();
         Chat chat = new Chat(userId, content, datetime);
         chatRepository.save(chat);
+        return new ChatDTO(userId, content, datetime);
     }
 
 }
