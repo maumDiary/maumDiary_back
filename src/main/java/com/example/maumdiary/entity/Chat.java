@@ -28,8 +28,7 @@ public class Chat implements Serializable {
     private LocalDateTime datetime;
 
     @Builder
-    public Chat(Long chatId, Long userId, String content, LocalDateTime datetime) {
-        this.chatId = chatId;
+    public Chat(Long userId, String content, LocalDateTime datetime) {
         this.userId = userId;
         this.content = content;
         this.datetime = datetime;

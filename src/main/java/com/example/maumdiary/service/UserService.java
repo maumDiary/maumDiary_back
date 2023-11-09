@@ -37,4 +37,10 @@ public class UserService {
         return concatenatedContent.toString();
     }
 
+    public void saveChatContent(Long userId, String content) {
+        LocalDateTime datetime = LocalDateTime.now();
+        Chat chat = new Chat(userId, content, datetime);
+        chatRepository.save(chat);
+    }
+
 }
