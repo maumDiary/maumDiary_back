@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
     List<Chat> findByUserIdAndDatetimeBetween(Long userId, LocalDateTime startDatetime, LocalDateTime endDatetime);
+    Chat findByUserIdAndDatetime(Long userId, LocalDateTime datetime);
 }
