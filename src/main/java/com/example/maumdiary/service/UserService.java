@@ -33,7 +33,7 @@ public class UserService {
         List<Chat> chatList = getChatDataByUserIdFromTodayMorning(userId);
         StringBuilder concatenatedContent = new StringBuilder();
         for (Chat chat : chatList) {
-            concatenatedContent.append(chat.getContent());
+            concatenatedContent.append(chat.getContent() + " ");
         }
         return concatenatedContent.toString();
     }
