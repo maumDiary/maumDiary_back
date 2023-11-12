@@ -8,6 +8,10 @@ import com.example.maumdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @RestController
 @RequestMapping("/chatgpt")
 public class ChatgptController {
@@ -26,6 +30,17 @@ public class ChatgptController {
         String chatContent = userService.concatChat(userId);
 
         ChatGptResponseDto chatGptResponseDto;
+
+        // 오전 8시 이전에 <도비> 클릭 시 자동 일기쓰기 불가
+        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDate todayDate = LocalDate.now();
+        LocalTime today8am = LocalTime.of(8,0);
+        LocalDateTime morning8am = LocalDateTime.of(todayDate, today8am);
+        if (localDateTime.isBefore(morning8am)) {
+            return new ResponseDTO<>(404, false, "08시 이후부터 자동 일기쓰기가 가능합니다.", null);
+        }
+
+        // 채팅 내용이 적거나 없으면 자동 일기쓰기 불가
         if (chatContent == null) {
             return new ResponseDTO<>(404, false, "채팅 내용이 없습니다.", null);
         } else if (chatContent.length() < 100) {
