@@ -26,6 +26,12 @@ public class ChatgptController {
         String chatContent = userService.concatChat(userId);
 
         ChatGptResponseDto chatGptResponseDto;
+        if (chatContent == null) {
+            return new ResponseDTO<>(404, false, "채팅 내용이 없습니다.", null);
+        } else if (chatContent.length() < 100) {
+            return new ResponseDTO<>(400, false, "채팅 내용이 부족합니다.", null);
+        }
+
         try {
             String question = "아래 내용은 내가 오늘 하루동안 '나와의 채팅방'에 쓴 내용들이야. 아래 내용을 이용해서 100자 이내의 일기를 써줘.\n\n'" + chatContent + "'";
             chatGptResponseDto = chatgptService.askQuestion(question);
