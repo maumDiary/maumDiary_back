@@ -3,6 +3,7 @@ package com.example.maumdiary.service;
 import com.example.maumdiary.dto.ChatDTO;
 import com.example.maumdiary.entity.Chat;
 import com.example.maumdiary.entity.ChatRepository;
+import com.example.maumdiary.entity.User;
 import com.example.maumdiary.entity.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,16 @@ public class UserService {
         Chat chat = new Chat(userId, content, datetime);
         chatRepository.save(chat);
         return new ChatDTO(userId, content, datetime);
+    }
+
+    public User getUserByUserId(Long userId) {
+        return userRepository.findById(userId).get();
+    }
+
+    public void updateLevel(Long userId, int level) {
+        User user = userRepository.findById(userId).get();
+        user.setLevel(level);
+        userRepository.save(user);
     }
 
 }

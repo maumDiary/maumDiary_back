@@ -27,11 +27,15 @@ public class User implements Serializable {
     @Column(name = "level", nullable = false)
     private int level;
 
+    @Column(name = "connect_num", nullable = false)
+    private int connectNum;
+
     @Builder
-    public User(String socialIdType, String socialId, String nickname, int level) {
+    public User(String socialIdType, String socialId, String nickname, int level, int connectNum) {
         this.socialIdType = socialIdType;
         this.socialId = socialId;
         this.nickname = nickname;
         this.level = level;
+        this.connectNum = connectNum;
     }
 }

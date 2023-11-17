@@ -3,13 +3,11 @@ package com.example.maumdiary.controller;
 import com.example.maumdiary.dto.ChatDTO;
 import com.example.maumdiary.dto.ResponseDTO;
 import com.example.maumdiary.dto.SaveChatReqDTO;
+import com.example.maumdiary.entity.User;
 import com.example.maumdiary.service.ChatGptService;
 import com.example.maumdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -38,5 +36,21 @@ public class UserController {
         }
 
         return new ResponseDTO<>(200, true, "채팅이 저장되었습니다.", chatDTO);
+    }
+
+    // 접속 횟수로 레벨을 정하고 해당 레벨을 db에 저장
+    @GetMapping("/{user_id}/level")
+    public ResponseDTO<Integer> saveUserLevel(@PathVariable("user_id") Long userId) {
+        User user = userService.getUserByUserId(userId);
+        int connectNum = user.getConnectNum();
+        int level = 0;
+        if (connectNum < 10);
+        else if (connectNum < 20) level = 1;
+        else if (connectNum < 30) level = 2;
+        else if (connectNum < 40) level = 3;
+        else level = 4;
+        userService.updateLevel(userId, level);
+
+        return new ResponseDTO<>(200, true, "사용자의 레벨이 업데이트 되었습니다.", level);
     }
 }
