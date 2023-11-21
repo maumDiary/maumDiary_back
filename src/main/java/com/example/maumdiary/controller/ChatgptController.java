@@ -3,6 +3,7 @@ package com.example.maumdiary.controller;
 import com.example.maumdiary.dto.ChatGptDiaryDTO;
 import com.example.maumdiary.dto.ChatGptResponseDto;
 import com.example.maumdiary.dto.ResponseDTO;
+import com.example.maumdiary.entity.Diary;
 import com.example.maumdiary.service.ChatGptService;
 import com.example.maumdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class ChatgptController {
         LocalTime today8am = LocalTime.of(8,0);
         LocalDateTime morning8am = LocalDateTime.of(todayDate, today8am);
         if (localDateTime.isBefore(morning8am)) {
-            return new ResponseDTO<>(404, false, "08시 이후부터 자동 일기쓰기가 가능합니다.", null);
+            return new ResponseDTO<>(403, false, "08시 이후부터 자동 일기 쓰기가 가능합니다.", null);
         }
 
         // 채팅 내용이 적거나 없으면 자동 일기쓰기 불가
@@ -50,6 +51,12 @@ public class ChatgptController {
         try {
             String question = "아래 내용은 내가 오늘 하루동안 '나와의 채팅방'에 쓴 내용들이야. 아래 내용을 이용해서 100자 이내의 일기를 써줘.\n\n'" + chatContent + "'";
             chatGptResponseDto = chatgptService.askQuestion(question);
+            // 해당 날짜의 일기가 존재하는지 확인
+            LocalDate localDate = LocalDate.now();
+            Diary diary = userService.getDiary(userId, localDate);
+            if (diary != null) {
+
+            }
             // 일기 내용 db에 저장
             chatgptService.saveDiary(userId, chatGptResponseDto.getChoices().get(0).getMessage().getContent());
         } catch (Exception e) {

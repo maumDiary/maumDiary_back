@@ -24,14 +24,14 @@ public class Diary implements Serializable {
     @Column
     public String content;
 
-    @Column
-    public LocalDateTime created_at;
+    @Column(name = "created_at", nullable = false)
+    public LocalDateTime createdAt;
 
     @Builder
-    public Diary(Long userId, String content, LocalDateTime created_at) {
+    public Diary(Long userId, String content, LocalDateTime createdAt) {
         this.userId = userId;
         this.content = content;
-        this.created_at = created_at;
+        this.createdAt = createdAt;
     }
 
 

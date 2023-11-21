@@ -77,4 +77,5 @@ public class ChatGptService {
         Diary diary = new Diary(userId, content, now);
         diaryRepository.save(diary);
     }
+
 }

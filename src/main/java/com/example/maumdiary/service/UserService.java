@@ -1,12 +1,11 @@
 package com.example.maumdiary.service;
 
 import com.example.maumdiary.dto.ChatDTO;
-import com.example.maumdiary.entity.Chat;
-import com.example.maumdiary.entity.ChatRepository;
-import com.example.maumdiary.entity.UserRepository;
+import com.example.maumdiary.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,10 +15,17 @@ public class UserService {
 
     private final ChatRepository chatRepository;
 
+    private final DiaryRepository diaryRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository, ChatRepository chatRepository) {
+    public UserService(UserRepository userRepository, ChatRepository chatRepository, DiaryRepository diaryRepository) {
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
+        this.diaryRepository = diaryRepository;
+    }
+
+    public User getUserByUserId(Long userId) {
+        return userRepository.findById(userId).get();
     }
 
     public List<Chat> getChatDataByUserIdFromTodayMorning(Long userId) {
@@ -43,6 +49,16 @@ public class UserService {
         Chat chat = new Chat(userId, content, datetime);
         chatRepository.save(chat);
         return new ChatDTO(userId, content, datetime);
+    }
+
+    public Diary getDiary(Long userId, LocalDate date) {
+        return diaryRepository.findByUserIdAndCreatedAt(userId, date);
+    }
+
+    public void updateLevel(Long userId, int level) {
+        User user = userRepository.findById(userId).get();
+        user.setLevel(level);
+        userRepository.save(user);
     }
 
 }
