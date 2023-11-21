@@ -17,11 +17,14 @@ public class UserService {
 
     private final DiaryRepository diaryRepository;
 
+    private final ColorRepository colorRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository, ChatRepository chatRepository, DiaryRepository diaryRepository) {
+    public UserService(UserRepository userRepository, ChatRepository chatRepository, DiaryRepository diaryRepository, ColorRepository colorRepository) {
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
         this.diaryRepository = diaryRepository;
+        this.colorRepository = colorRepository;
     }
 
     public User getUserByUserId(Long userId) {
@@ -59,6 +62,23 @@ public class UserService {
         User user = userRepository.findById(userId).get();
         user.setLevel(level);
         userRepository.save(user);
+    }
+
+    public Color saveColor(Long userId, String colorName, LocalDate date) {
+        Color color = new Color(userId, colorName, date);
+        Color colorOfDate;
+        // 사용자가 해당 날짜에 색깔을 선택하지 않았을 때
+        if ((colorOfDate = colorRepository.findColorByUserIdAndDate(userId, date)) == null) {
+            colorRepository.save(color);
+        }
+        // 사용자가 해당 날짜에 이미 색깔을 선택했을 때
+        else {
+            Long colorId = colorOfDate.getColorId();
+            colorRepository.deleteById(colorId);
+            colorRepository.save(color);
+        }
+
+        return colorRepository.findColorByUserIdAndDate(userId, date);
     }
 
 }

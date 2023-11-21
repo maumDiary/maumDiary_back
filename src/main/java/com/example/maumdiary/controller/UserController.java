@@ -1,25 +1,25 @@
 package com.example.maumdiary.controller;
 
 import com.example.maumdiary.dto.ChatDTO;
+import com.example.maumdiary.dto.ColorReqDTO;
 import com.example.maumdiary.dto.ResponseDTO;
 import com.example.maumdiary.dto.SaveChatReqDTO;
+import com.example.maumdiary.entity.Color;
 import com.example.maumdiary.entity.User;
-import com.example.maumdiary.service.ChatGptService;
 import com.example.maumdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
-    private final ChatGptService chatGptService;
-
     @Autowired
-    public UserController(UserService userService, ChatGptService chatGptService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.chatGptService = chatGptService;
     }
 
     // 사용자가 전송한 채팅 내용을 db에 저장
@@ -52,5 +52,30 @@ public class UserController {
         userService.updateLevel(userId, level);
 
         return new ResponseDTO<>(200, true, "사용자의 레벨이 업데이트 되었습니다.", level);
+    }
+
+    @GetMapping("/{user_id}")
+    public ResponseDTO<User> getUserById(@PathVariable("user_id") Long userId) {
+        User user = userService.getUserByUserId(userId);
+
+        return new ResponseDTO<>(200, true, "사용자 정보를 불러왔습니다.", user);
+    }
+
+    @PostMapping("/{user_id}/color")
+    public ResponseDTO<Color> saveColor(@PathVariable("user_id") Long userId,
+                                        @RequestBody ColorReqDTO requestbody) {
+
+        try {
+            User user = userService.getUserByUserId(userId);
+        } catch (Exception e) {
+            System.out.println("e.getMeaage() : " + e.getMessage());
+            return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
+        }
+
+        String colorName = requestbody.getColor_name();
+        LocalDate date = requestbody.getDate();
+        Color color = userService.saveColor(userId, colorName, date);
+
+        return new ResponseDTO<>(201, true, "색깔이 저장되었습니다.", color);
     }
 }
