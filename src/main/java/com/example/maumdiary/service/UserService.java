@@ -81,4 +81,7 @@ public class UserService {
         return colorRepository.findColorByUserIdAndDate(userId, date);
     }
 
+    public Color getColor(Long userId, LocalDate date) {
+        return colorRepository.findColorByUserIdAndDate(userId, date);
+    }
 }

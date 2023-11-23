@@ -78,4 +78,13 @@ public class UserController {
 
         return new ResponseDTO<>(201, true, "색깔이 저장되었습니다.", color);
     }
+
+    @GetMapping("/{user_id}/today")
+    public ResponseDTO<Color> todayColor(@PathVariable("user_id") Long userId) {
+        LocalDate today = LocalDate.now();
+        Color color = userService.getColor(userId, today);
+
+        return new ResponseDTO<>(200, true, "색깔을 불러왔습니다.", color);
+    }
+
 }
