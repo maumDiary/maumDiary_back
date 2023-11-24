@@ -1,9 +1,6 @@
 package com.example.maumdiary.controller;
 
-import com.example.maumdiary.dto.ChatDTO;
-import com.example.maumdiary.dto.ColorReqDTO;
-import com.example.maumdiary.dto.ResponseDTO;
-import com.example.maumdiary.dto.SaveChatReqDTO;
+import com.example.maumdiary.dto.*;
 import com.example.maumdiary.entity.Chat;
 import com.example.maumdiary.entity.Color;
 import com.example.maumdiary.entity.User;
@@ -27,6 +24,26 @@ public class UserController {
         this.userService = userService;
     }
 
+    // 닉네임 변경
+    @PatchMapping("/{user_id}")
+    public ResponseDTO<UserDTO> changeNickname(@PathVariable("user_id") Long userId,
+                                               @RequestParam("nickname") String nickname) {
+        User user;
+        try {
+            user = userService.getUserByUserId(userId);
+        } catch (Exception e) {
+            System.out.println("e.getMeaage() : " + e.getMessage());
+            return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
+        }
+
+        user.setNickname(nickname);
+        userService.updateUser(user);
+
+        UserDTO userDTO = new UserDTO(userId, nickname, user.getLevel(), user.getExp());
+
+        return new ResponseDTO<>(200, true, "닉네임이 변경되었습니다.", userDTO);
+    }
+
     // 사용자가 전송한 채팅 내용을 db에 저장
     @PostMapping("/chat")
     public ResponseDTO<ChatDTO> saveChatContents(@RequestBody SaveChatReqDTO requestbody){
@@ -47,12 +64,12 @@ public class UserController {
     @GetMapping("/{user_id}/level")
     public ResponseDTO<Integer> saveUserLevel(@PathVariable("user_id") Long userId) {
         User user = userService.getUserByUserId(userId);
-        int connectNum = user.getConnectNum();
+        int exp = user.getExp();
         int level = 0;
-        if (connectNum < 10);
-        else if (connectNum < 20) level = 1;
-        else if (connectNum < 30) level = 2;
-        else if (connectNum < 40) level = 3;
+        if (exp < 10);
+        else if (exp < 20) level = 1;
+        else if (exp < 30) level = 2;
+        else if (exp < 40) level = 3;
         else level = 4;
         userService.updateLevel(userId, level);
 

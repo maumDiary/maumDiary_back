@@ -105,4 +105,8 @@ public class UserService {
         return colorRepository.findColorByUserIdAndDate(userId, date);
     }
 
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
+
 }
