@@ -44,6 +44,24 @@ public class UserController {
         return new ResponseDTO<>(200, true, "닉네임이 변경되었습니다.", userDTO);
     }
 
+    // 회원 탈퇴
+    @DeleteMapping("/{user_id}")
+    public ResponseDTO<UserDTO> deleteUser(@PathVariable("user_id") Long userId) {
+        User user;
+        try {
+            user = userService.getUserByUserId(userId);
+        } catch (Exception e) {
+            System.out.println("e.getMeaage() : " + e.getMessage());
+            return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
+        }
+        UserDTO userDTO = new UserDTO(userId, user.getNickname(), user.getLevel(), user.getExp());
+
+        // 유저 삭제
+        userService.deleteUser(user);
+
+        return new ResponseDTO<>(200, true, "탈퇴가 완료되었습니다.", userDTO);
+    }
+
     // 사용자가 전송한 채팅 내용을 db에 저장
     @PostMapping("/chat")
     public ResponseDTO<ChatDTO> saveChatContents(@RequestBody SaveChatReqDTO requestbody){
