@@ -101,4 +101,8 @@ public class UserService {
         return colorRepository.findColorsByUserIdAndDateBetween(userId, startDate, endDate);
     }
 
+    public Color getDailyColor(Long userId, LocalDate date) {
+        return colorRepository.findColorByUserIdAndDate(userId, date);
+    }
+
 }

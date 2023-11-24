@@ -134,4 +134,26 @@ public class UserController {
 
         return new ResponseDTO<>(200, true, "색깔을 불러왔습니다.", colors);
     }
+
+    @GetMapping("/{user_id}/color")
+    public ResponseDTO<Color> getDailyColor(@PathVariable("user_id") Long userId,
+                                            @RequestParam("date") String date) {
+        try {
+            userService.getUserByUserId(userId);
+        } catch (Exception e) {
+            System.out.println("e.getMeaage() : " + e.getMessage());
+            return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
+        }
+
+        LocalDate localDate = LocalDate.parse(date);
+        Color color;
+
+        try {
+            color = userService.getDailyColor(userId, localDate);
+        } catch (Exception e) {
+            return new ResponseDTO<>(400, false, e.getMessage(), null);
+        }
+
+        return new ResponseDTO<>(200, true, "색깔을 불러왔습니다.", color);
+    }
 }
