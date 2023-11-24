@@ -81,8 +81,4 @@ public class UserService {
         return colorRepository.findColorByUserIdAndDate(userId, date);
     }
 
-    public List<Chat> getChats(Long userId) {
-        return chatRepository.findChatsByUserId(userId);
-    }
-
 }
