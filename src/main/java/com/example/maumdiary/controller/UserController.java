@@ -93,4 +93,19 @@ public class UserController {
         List<Chat> chats = userService.getChats(userId);
         return new ResponseDTO<>(200, true, "채팅 내용을 불러왔습니다.", chats);
     }
+
+    @GetMapping("/{user_id}/today")
+    public ResponseDTO<Color> todayColor(@PathVariable("user_id") Long userId) {
+        try {
+            userService.getUserByUserId(userId);
+        } catch (Exception e) {
+            System.out.println("e.getMeaage() : " + e.getMessage());
+            return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
+        }
+
+        LocalDate today = LocalDate.now();
+        Color color = userService.getColor(userId, today);
+
+        return new ResponseDTO<>(200, true, "색깔을 불러왔습니다.", color);
+    }
 }

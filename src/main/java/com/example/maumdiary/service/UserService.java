@@ -85,4 +85,8 @@ public class UserService {
         return chatRepository.findChatsByUserId(userId);
     }
 
+    public Color getColor(Long userId, LocalDate date) {
+        return colorRepository.findColorByUserIdAndDate(userId, date);
+    }
+
 }
