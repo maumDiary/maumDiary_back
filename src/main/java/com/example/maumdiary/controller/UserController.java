@@ -4,6 +4,7 @@ import com.example.maumdiary.dto.ChatDTO;
 import com.example.maumdiary.dto.ColorReqDTO;
 import com.example.maumdiary.dto.ResponseDTO;
 import com.example.maumdiary.dto.SaveChatReqDTO;
+import com.example.maumdiary.entity.Chat;
 import com.example.maumdiary.entity.Color;
 import com.example.maumdiary.entity.User;
 import com.example.maumdiary.service.UserService;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -66,7 +68,7 @@ public class UserController {
                                         @RequestBody ColorReqDTO requestbody) {
 
         try {
-            User user = userService.getUserByUserId(userId);
+            userService.getUserByUserId(userId);
         } catch (Exception e) {
             System.out.println("e.getMeaage() : " + e.getMessage());
             return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
@@ -77,5 +79,18 @@ public class UserController {
         Color color = userService.saveColor(userId, colorName, date);
 
         return new ResponseDTO<>(201, true, "색깔이 저장되었습니다.", color);
+    }
+
+    @GetMapping("/{user_id}/chat")
+    public ResponseDTO<List<Chat>> getChats(@PathVariable("user_id") Long userId) {
+        try {
+            userService.getUserByUserId(userId);
+        } catch (Exception e) {
+            System.out.println("e.getMeaage() : " + e.getMessage());
+            return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
+        }
+
+        List<Chat> chats = userService.getChats(userId);
+        return new ResponseDTO<>(200, true, "채팅 내용을 불러왔습니다.", chats);
     }
 }
