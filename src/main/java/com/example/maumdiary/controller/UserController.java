@@ -11,7 +11,10 @@ import com.example.maumdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -107,5 +110,28 @@ public class UserController {
         Color color = userService.getColor(userId, today);
 
         return new ResponseDTO<>(200, true, "색깔을 불러왔습니다.", color);
+    }
+
+    @GetMapping("/{user_id}/month")
+    public ResponseDTO<List<Color>> getMonthlyColor(@PathVariable("user_id") Long userId,
+                                                    @RequestParam("date") String date) throws ParseException {
+        try {
+            userService.getUserByUserId(userId);
+        } catch (Exception e) {
+            System.out.println("e.getMeaage() : " + e.getMessage());
+            return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
+        }
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
+        Date month = simpleDateFormat.parse(date);
+        List<Color> colors;
+
+        try {
+             colors = userService.getMonthlyColor(userId, month);
+        } catch (Exception e) {
+            return new ResponseDTO<>(400, false, e.getMessage(), null);
+        }
+
+        return new ResponseDTO<>(200, true, "색깔을 불러왔습니다.", colors);
     }
 }

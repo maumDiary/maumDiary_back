@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -87,6 +88,17 @@ public class UserService {
 
     public Color getColor(Long userId, LocalDate date) {
         return colorRepository.findColorByUserIdAndDate(userId, date);
+    }
+
+    public List<Color> getMonthlyColor(Long userId, Date month) {
+        // 2. Date -> LocalDate
+        LocalDate date = new java.sql.Date(month.getTime())  // java.util.Date -> java.sql.Date
+                .toLocalDate();  // java.sql.Date -> LocalDate
+
+        LocalDate startDate = date.withDayOfMonth(1);
+        LocalDate endDate = date.withDayOfMonth(date.lengthOfMonth());
+
+        return colorRepository.findColorsByUserIdAndDateBetween(userId, startDate, endDate);
     }
 
 }
