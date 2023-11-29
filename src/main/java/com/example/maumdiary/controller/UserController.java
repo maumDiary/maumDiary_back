@@ -120,7 +120,13 @@ public class UserController {
 
     @GetMapping("/{user_id}")
     public ResponseDTO<User> getUserById(@PathVariable("user_id") Long userId) {
-        User user = userService.getUserByUserId(userId);
+        User user;
+        try {
+            user = userService.getUserByUserId(userId);
+        } catch (Exception e) {
+            System.out.println("e.getMessage() : " + e.getMessage());
+            return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
+        }
 
         return new ResponseDTO<>(200, true, "사용자 정보를 불러왔습니다.", user);
     }
