@@ -23,15 +23,11 @@ public class GoogleLoginService {
                 .setAudience(Collections.singletonList(CLIENT_ID))
                 .build();
 
-        System.out.println(CLIENT_ID);
-
         GoogleIdToken idToken = verifier.verify(token);
-        System.out.println(idToken);
         if (idToken != null) {
             Payload payload = idToken.getPayload();
 
             String socialId = payload.getSubject();
-            System.out.println("socialId : " + socialId);
             return socialId;
         } else {
             System.out.println("Invalid Id token.");

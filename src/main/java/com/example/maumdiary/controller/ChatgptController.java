@@ -3,8 +3,8 @@ package com.example.maumdiary.controller;
 import com.example.maumdiary.dto.ChatGptDiaryDTO;
 import com.example.maumdiary.dto.ChatGptResponseDto;
 import com.example.maumdiary.dto.ResponseDTO;
-import com.example.maumdiary.entity.Diary;
 import com.example.maumdiary.service.ChatGptService;
+import com.example.maumdiary.service.JwtService;
 import com.example.maumdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +18,23 @@ import java.time.LocalTime;
 public class ChatgptController {
     private final ChatGptService chatgptService;
     private final UserService userService;
+    private final JwtService jwtService;
 
     @Autowired
-    public ChatgptController(ChatGptService chatgptService, UserService userService) {
+    public ChatgptController(ChatGptService chatgptService, UserService userService, JwtService jwtService) {
         this.chatgptService = chatgptService;
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     // chat-gpt와 간단한 채팅 서비스 소스
     @PostMapping("/diary")
-    public ResponseDTO<ChatGptDiaryDTO> writingDiary(@RequestParam Long userId) {
+    public ResponseDTO<ChatGptDiaryDTO> writingDiary(@RequestHeader("Authorization") String accessToken,
+                                                     @RequestParam Long userId) {
+        if (jwtService.isExpired(accessToken)) {
+            return new ResponseDTO<>(401, false, "토큰이 만료되었습니다.", null);
+        }
+
         String chatContent = userService.concatChat(userId);
 
         ChatGptResponseDto chatGptResponseDto;
@@ -42,21 +49,14 @@ public class ChatgptController {
         }
 
         // 채팅 내용이 적거나 없으면 자동 일기쓰기 불가
-        if (chatContent == null) {
-            return new ResponseDTO<>(404, false, "채팅 내용이 없습니다.", null);
-        } else if (chatContent.length() < 100) {
-            return new ResponseDTO<>(400, false, "채팅 내용이 부족합니다.", null);
+        if (chatContent == null | chatContent.length() < 100) {
+            return new ResponseDTO<>(404, false, "채팅 내용이 없거나 부족합니다.", null);
         }
 
         try {
             String question = "아래 내용은 내가 오늘 하루동안 '나와의 채팅방'에 쓴 내용들이야. 아래 내용을 이용해서 100자 이내의 일기를 써줘.\n\n'" + chatContent + "'";
             chatGptResponseDto = chatgptService.askQuestion(question);
-            // 해당 날짜의 일기가 존재하는지 확인
-            LocalDate localDate = LocalDate.now();
-            Diary diary = userService.getDiary(userId, localDate);
-            if (diary != null) {
 
-            }
             // 일기 내용 db에 저장
             chatgptService.saveDiary(userId, chatGptResponseDto.getChoices().get(0).getMessage().getContent());
         } catch (Exception e) {

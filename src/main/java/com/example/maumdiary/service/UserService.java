@@ -52,7 +52,7 @@ public class UserService {
         List<Chat> chatList = getChatDataByUserIdFromTodayMorning(userId);
         StringBuilder concatenatedContent = new StringBuilder();
         for (Chat chat : chatList) {
-            concatenatedContent.append(chat.getContent() + " ");
+            concatenatedContent.append(chat.getContent()).append(" ");
         }
         return concatenatedContent.toString();
     }
@@ -66,12 +66,6 @@ public class UserService {
 
     public Diary getDiary(Long userId, LocalDate date) {
         return diaryRepository.findByUserIdAndCreatedAt(userId, date);
-    }
-
-    public void updateLevel(Long userId, int level) {
-        User user = userRepository.findById(userId).get();
-        user.setLevel(level);
-        userRepository.save(user);
     }
 
     public Color saveColor(Long userId, String colorName, LocalDate date) {
@@ -116,6 +110,24 @@ public class UserService {
 
     public void updateUser(User user) {
         userRepository.save(user);
+    }
+
+    public int updateLevel(Long userId) {
+        User user = getUserByUserId(userId);
+        user.setExp(user.getExp() + 1);
+        int exp = user.getExp();
+
+        int level;
+        if (exp < 10) level = 1;
+        else if (exp < 20) level = 2;
+        else if (exp < 30) level = 3;
+        else if (exp < 40) level = 4;
+        else level = 5;
+
+        user.setLevel(level);
+        userRepository.save(user);
+
+        return level;
     }
 
     public void deleteUser(User user) {
