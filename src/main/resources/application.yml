@@ -34,3 +34,7 @@ chat-gpt:
 google:
   client:
     id: 530217043377-29apnth7jn03h2mp1etav0mufvmf6i98.apps.googleusercontent.com
+
+custom:
+  jwt:
+    secretKey: secretKeyForMaumDiarysecretKeysecretKeyForMaumDiarysecretKeysecretKeyForMaumDiarysecretKey

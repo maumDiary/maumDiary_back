@@ -4,7 +4,7 @@ import com.example.maumdiary.dto.JwtDTO;
 import com.example.maumdiary.dto.ResponseDTO;
 import com.example.maumdiary.entity.User;
 import com.example.maumdiary.service.GoogleLoginService;
-import com.example.maumdiary.service.JwtService;
+import com.example.maumdiary.component.JwtProvider;
 import com.example.maumdiary.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,7 @@ import java.security.GeneralSecurityException;
 public class LoginController {
 
     private final UserService userService;
-    private final JwtService jwtService;
+    private final JwtProvider jwtProvider;
     private final GoogleLoginService googleLoginService;
 
     // 구글 로그인
@@ -40,8 +40,8 @@ public class LoginController {
         }
 
         // 사용자가 있으면 JWT 자체 토큰 발급 후 로그인 완료 처리
-        String accessToken = jwtService.createAccessToken(user);
-        String refreshToken = jwtService.createRefreshToken(user);
+        String accessToken = jwtProvider.createAccessToken(user);
+        String refreshToken = jwtProvider.createRefreshToken(user);
 
         JwtDTO jwtDTO = new JwtDTO(user.getId(), accessToken, refreshToken);
         return new ResponseDTO<>(200, true, "로그인이 완료되었습니다.", jwtDTO);

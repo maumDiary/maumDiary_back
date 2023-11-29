@@ -4,7 +4,7 @@ import com.example.maumdiary.dto.ChatGptDiaryDTO;
 import com.example.maumdiary.dto.ChatGptResponseDto;
 import com.example.maumdiary.dto.ResponseDTO;
 import com.example.maumdiary.service.ChatGptService;
-import com.example.maumdiary.service.JwtService;
+import com.example.maumdiary.component.JwtProvider;
 import com.example.maumdiary.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,20 +18,20 @@ import java.time.LocalTime;
 public class ChatgptController {
     private final ChatGptService chatgptService;
     private final UserService userService;
-    private final JwtService jwtService;
+    private final JwtProvider jwtProvider;
 
     @Autowired
-    public ChatgptController(ChatGptService chatgptService, UserService userService, JwtService jwtService) {
+    public ChatgptController(ChatGptService chatgptService, UserService userService, JwtProvider jwtProvider) {
         this.chatgptService = chatgptService;
         this.userService = userService;
-        this.jwtService = jwtService;
+        this.jwtProvider = jwtProvider;
     }
 
     // chat-gpt와 간단한 채팅 서비스 소스
     @PostMapping("/diary")
     public ResponseDTO<ChatGptDiaryDTO> writingDiary(@RequestHeader("Authorization") String accessToken,
                                                      @RequestParam Long userId) {
-        if (jwtService.isExpired(accessToken)) {
+        if (jwtProvider.verify(accessToken)) {
             return new ResponseDTO<>(401, false, "토큰이 만료되었습니다.", null);
         }
 

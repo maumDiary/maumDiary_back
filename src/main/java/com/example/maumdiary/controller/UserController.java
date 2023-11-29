@@ -5,7 +5,7 @@ import com.example.maumdiary.entity.Chat;
 import com.example.maumdiary.entity.Color;
 import com.example.maumdiary.entity.User;
 import com.example.maumdiary.service.GoogleLoginService;
-import com.example.maumdiary.service.JwtService;
+import com.example.maumdiary.component.JwtProvider;
 import com.example.maumdiary.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    private final JwtService jwtService;
+    private final JwtProvider jwtProvider;
     private final GoogleLoginService googleLoginService;
 
     // 회원가입
@@ -36,13 +36,15 @@ public class UserController {
             return new ResponseDTO<>(401, false, "토큰이 유효하지 않습니다.", null);
         }
 
+        String nickname = requestbody.getNickname();
+
         // 사용자 db에 저장
-        User user = new User("google", socialId, requestbody.getNickname(), 1, 1);
+        User user = new User("google", socialId, nickname, 1, 1);
         user = userService.insertUser(user);
 
         // JWT 전용 토큰을 생성하여 리턴
-        String accessToken = jwtService.createAccessToken(user);
-        String refreshToken = jwtService.createRefreshToken(user);
+        String accessToken = jwtProvider.createAccessToken(user);
+        String refreshToken = jwtProvider.createRefreshToken(user);
         JwtDTO jwtDTO = new JwtDTO(user.getId(), accessToken, refreshToken);
 
         return new ResponseDTO<>(201, true, "회원가입 완료하였습니다.", jwtDTO);
@@ -53,7 +55,7 @@ public class UserController {
     public ResponseDTO<UserDTO> changeNickname(@RequestHeader("Authorization") String accessToken,
                                                @PathVariable("user_id") Long userId,
                                                @RequestParam("nickname") String nickname) {
-        if (jwtService.isExpired(accessToken)) {
+        if (!jwtProvider.verify(accessToken)) {
             return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
         }
 
@@ -77,7 +79,7 @@ public class UserController {
     @DeleteMapping("/{user_id}")
     public ResponseDTO<UserDTO> deleteUser(@RequestHeader("Authorization") String accessToken,
                                            @PathVariable("user_id") Long userId) {
-        if (jwtService.isExpired(accessToken)) {
+        if (!jwtProvider.verify(accessToken)) {
             return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
         }
 
@@ -100,7 +102,7 @@ public class UserController {
     @PostMapping("/chat")
     public ResponseDTO<ChatDTO> saveChatContents(@RequestHeader("Authorization") String accessToken,
                                                  @RequestBody SaveChatReqDTO requestbody){
-        if (jwtService.isExpired(accessToken)) {
+        if (!jwtProvider.verify(accessToken)) {
             return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
         }
 
@@ -119,7 +121,12 @@ public class UserController {
 
     // 사용자 정보 조회
     @GetMapping("/{user_id}")
-    public ResponseDTO<User> getUserById(@PathVariable("user_id") Long userId) {
+    public ResponseDTO<UserDTO> getUserById(@RequestHeader("Authorization") String accessToken,
+                                         @PathVariable("user_id") Long userId) {
+        if (!jwtProvider.verify(accessToken)) {
+            return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
+        }
+
         User user;
         try {
             user = userService.getUserByUserId(userId);
@@ -128,7 +135,9 @@ public class UserController {
             return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
         }
 
-        return new ResponseDTO<>(200, true, "사용자 정보를 불러왔습니다.", user);
+        UserDTO userDTO = new UserDTO(userId, user.getNickname(), user.getLevel(), user.getExp());
+
+        return new ResponseDTO<>(200, true, "사용자 정보를 불러왔습니다.", userDTO);
     }
 
     // 색깔 저장
@@ -136,7 +145,7 @@ public class UserController {
     public ResponseDTO<Color> saveColor(@RequestHeader("Authorization") String accessToken,
                                         @PathVariable("user_id") Long userId,
                                         @RequestBody ColorReqDTO requestbody) {
-        if (jwtService.isExpired(accessToken)) {
+        if (!jwtProvider.verify(accessToken)) {
             return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
         }
 
@@ -161,7 +170,7 @@ public class UserController {
     @GetMapping("/{user_id}/chat")
     public ResponseDTO<List<Chat>> getChats(@RequestHeader("Authorization") String accessToken,
                                             @PathVariable("user_id") Long userId) {
-        if (jwtService.isExpired(accessToken)) {
+        if (!jwtProvider.verify(accessToken)) {
             return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
         }
 
@@ -179,7 +188,7 @@ public class UserController {
     @GetMapping("/{user_id}/today")
     public ResponseDTO<Color> todayColor(@RequestHeader("Authorization") String accessToken,
                                          @PathVariable("user_id") Long userId) {
-        if (jwtService.isExpired(accessToken)) {
+        if (!jwtProvider.verify(accessToken)) {
             return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
         }
 
@@ -200,7 +209,7 @@ public class UserController {
     public ResponseDTO<List<Color>> getMonthlyColor(@RequestHeader("Authorization") String accessToken,
                                                     @PathVariable("user_id") Long userId,
                                                     @RequestParam("date") String date) throws ParseException {
-        if (jwtService.isExpired(accessToken)) {
+        if (!jwtProvider.verify(accessToken)) {
             return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
         }
 
@@ -228,7 +237,7 @@ public class UserController {
     public ResponseDTO<Color> getDailyColor(@RequestHeader("Authorization") String acessToken,
                                             @PathVariable("user_id") Long userId,
                                             @RequestParam("date") String date) {
-        if (jwtService.isExpired(acessToken)) {
+        if (!jwtProvider.verify(acessToken)) {
             return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
         }
 
