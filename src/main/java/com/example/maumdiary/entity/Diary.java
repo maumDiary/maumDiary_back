@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,10 +26,10 @@ public class Diary implements Serializable {
     public String content;
 
     @Column(name = "created_at", nullable = false)
-    public LocalDateTime createdAt;
+    public LocalDate createdAt;
 
     @Builder
-    public Diary(Long userId, String content, LocalDateTime createdAt) {
+    public Diary(Long userId, String content, LocalDate createdAt) {
         this.userId = userId;
         this.content = content;
         this.createdAt = createdAt;

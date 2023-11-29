@@ -1,6 +1,7 @@
 package com.example.maumdiary.service;
 
 import com.example.maumdiary.dto.ChatDTO;
+import com.example.maumdiary.dto.DiaryDTO;
 import com.example.maumdiary.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,9 +65,6 @@ public class UserService {
         return new ChatDTO(userId, content, datetime);
     }
 
-    public Diary getDiary(Long userId, LocalDate date) {
-        return diaryRepository.findByUserIdAndCreatedAt(userId, date);
-    }
 
     public Color saveColor(Long userId, String colorName, LocalDate date) {
         Color color = new Color(userId, colorName, date);
@@ -134,4 +132,26 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public Diary getDiary(Long userId, LocalDate date) {
+        return diaryRepository.findDiaryByUserIdAndCreatedAt(userId, date);
+    }
+
+    public DiaryDTO saveDiaryContents(Long userId, String content) {
+        LocalDate createdAt = LocalDate.now();
+        Diary diary = new Diary(userId, content, createdAt);
+        Diary diaryOfDate;
+
+        // 사용자가 해당 날짜에 일기를 작성하지 않았을 때
+        if ((diaryOfDate = diaryRepository.findDiaryByUserIdAndCreatedAt(userId, createdAt)) == null) {
+            diaryRepository.save(diary);
+        }
+        // 사용자가 해당 날짜에 이미 일기를 작성했을 때
+        else {
+            Long diaryId = diaryOfDate.getDiaryId();
+            diaryRepository.deleteById(diaryId);
+            diaryRepository.save(diary);
+        }
+
+        return new DiaryDTO(userId, content, createdAt);
+    }
 }
