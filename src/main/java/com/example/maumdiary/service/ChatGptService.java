@@ -12,7 +12,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +73,7 @@ public class ChatGptService {
 
     // chat gpt가 작성해준 일기를 db에 저장하는 메서드
     public void saveDiary(Long userId, String content) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         Diary diary = new Diary(userId, content, now);
         diaryRepository.save(diary);
     }
