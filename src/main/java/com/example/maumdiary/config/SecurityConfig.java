@@ -16,4 +16,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable(); // 상태 저장하지 않으므로 csrf 보안 미설정
     }
 
+
+
 }

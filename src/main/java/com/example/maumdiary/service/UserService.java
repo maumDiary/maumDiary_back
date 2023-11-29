@@ -32,6 +32,15 @@ public class UserService {
         return userRepository.findById(userId).get();
     }
 
+    public User getUserByGoogleId(String socialId) {
+        return userRepository.findUserBySocialIdAndSocialIdType(socialId, "google");
+    }
+
+    // 회원 등록
+    public User insertUser(User user) {
+        return userRepository.save(user);
+    }
+
     public List<Chat> getChatDataByUserIdFromTodayMorning(Long userId) {
         LocalDateTime morning8AM = LocalDateTime.now().withHour(8).withMinute(0).withSecond(0);
         LocalDateTime currentTime = LocalDateTime.now();
