@@ -3,6 +3,7 @@ package com.example.maumdiary.controller;
 import com.example.maumdiary.dto.*;
 import com.example.maumdiary.entity.Chat;
 import com.example.maumdiary.entity.Color;
+import com.example.maumdiary.entity.Diary;
 import com.example.maumdiary.entity.User;
 import com.example.maumdiary.service.GoogleLoginService;
 import com.example.maumdiary.component.JwtProvider;
@@ -259,4 +260,48 @@ public class UserController {
 
         return new ResponseDTO<>(200, true, "색깔을 불러왔습니다.", color);
     }
+
+    // Diary 저장
+    @PostMapping("/diary")
+    public ResponseDTO<DiaryDTO> saveDiaryContents(@RequestHeader("Authorization") String accessToken,
+                                                   @RequestBody SaveChatReqDTO requestbody){
+        Long userId = requestbody.getUserId();
+        String content = requestbody.getContent();
+        DiaryDTO diaryDTO;
+        if (!jwtProvider.verify(accessToken)) {
+            return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
+        }
+        try {
+            diaryDTO = userService.saveDiaryContents(userId, content);
+        } catch (Exception e) {
+            System.out.println("e.getMassage : " + e.getMessage());
+            return new ResponseDTO<>(400, false, "일기가 저장되지 않았습니다.", null);
+        }
+        return new ResponseDTO<>(200, true, "일기가 저장되었습니다.", diaryDTO);
+    }
+
+    // Diary 불러오기
+    @GetMapping("/{user_id}/diary")
+    public ResponseDTO<Diary> getDiary(@RequestHeader("Authorization") String accessToken,
+                                       @PathVariable("user_id") Long userId,
+                                       @RequestParam("date") String date) {
+        if (!jwtProvider.verify(accessToken)) {
+            return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
+        }
+        try {
+            userService.getUserByUserId(userId);
+        } catch (Exception e) {
+            System.out.println("e.getMessage() : " + e.getMessage());
+            return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
+        }
+        LocalDate localDate = LocalDate.parse(date);
+        Diary diary;
+        try {
+            diary = userService.getDiary(userId, localDate);
+        } catch (Exception e) {
+            return new ResponseDTO<>(400, false, e.getMessage(), null);
+        }
+        return new ResponseDTO<>(200, true, "일기를 불러왔습니다.", diary);
+    }
+
 }
