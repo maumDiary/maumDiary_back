@@ -3,7 +3,7 @@ package com.example.maumdiary.controller;
 import com.example.maumdiary.dto.JwtDTO;
 import com.example.maumdiary.dto.ResponseDTO;
 import com.example.maumdiary.entity.User;
-import com.example.maumdiary.service.GoogleLoginService;
+//import com.example.maumdiary.service.GoogleLoginService;
 import com.example.maumdiary.component.JwtProvider;
 import com.example.maumdiary.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+//import java.io.IOException;
+//import java.security.GeneralSecurityException;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,12 +22,12 @@ public class LoginController {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
-    private final GoogleLoginService googleLoginService;
+//    private final GoogleLoginService googleLoginService;
 
     // 구글 로그인
     @GetMapping("/google")
-    public ResponseDTO<JwtDTO> googleLogin(@RequestHeader("Authorization") String token) throws GeneralSecurityException, IOException {
-        String socialId = googleLoginService.getSocialIdByToken(token);
+    public ResponseDTO<JwtDTO> googleLogin(@RequestHeader("Authorization") String email) {
+        String socialId = email;
         // 유효하지 않은 토큰의 경우 socialId를 null로 리턴
         if (socialId == null) {
             return new ResponseDTO<>(401, false, "토큰이 유효하지 않습니다.", null);

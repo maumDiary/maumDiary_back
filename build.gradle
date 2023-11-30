@@ -40,7 +40,7 @@ dependencies {
 
     implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
 
-    compileOnly 'com.google.api-client:google-api-client:1.32.1'
+//    compileOnly 'com.google.api-client:google-api-client:1.32.1'
 }
 
 tasks.named('test') {

@@ -5,14 +5,14 @@ import com.example.maumdiary.entity.Chat;
 import com.example.maumdiary.entity.Color;
 import com.example.maumdiary.entity.Diary;
 import com.example.maumdiary.entity.User;
-import com.example.maumdiary.service.GoogleLoginService;
+//import com.example.maumdiary.service.GoogleLoginService;
 import com.example.maumdiary.component.JwtProvider;
 import com.example.maumdiary.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+//import java.io.IOException;
+//import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -25,13 +25,13 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final JwtProvider jwtProvider;
-    private final GoogleLoginService googleLoginService;
+//    private final GoogleLoginService googleLoginService;
 
     // 회원가입
     @PostMapping("/signup")
-    public ResponseDTO<JwtDTO> registerUser(@RequestHeader("Authorization") String token,
-                                            @RequestBody SignupDTO requestbody) throws GeneralSecurityException, IOException {
-        String socialId = googleLoginService.getSocialIdByToken(token);
+    public ResponseDTO<JwtDTO> registerUser(@RequestHeader("Authorization") String email,
+                                            @RequestBody SignupDTO requestbody) {
+        String socialId = email;
         // 유효하지 않은 토큰의 경우 socialId를 null로 리턴
         if (socialId == null) {
             return new ResponseDTO<>(401, false, "토큰이 유효하지 않습니다.", null);
