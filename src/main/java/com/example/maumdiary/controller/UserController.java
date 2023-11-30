@@ -51,6 +51,19 @@ public class UserController {
         return new ResponseDTO<>(201, true, "회원가입 완료하였습니다.", jwtDTO);
     }
 
+    // 토큰 재발급 api(추후 수정 필요)
+    @GetMapping("/{user_id}/token")
+    public ResponseDTO<JwtDTO> reissueToken(@RequestHeader("Authorization") String accessToken,
+                                            @PathVariable("user_id") Long userId) {
+        User user = userService.getUserByUserId(userId);
+
+        accessToken = jwtProvider.createAccessToken(user);
+        String refreshToken = jwtProvider.createRefreshToken(user);
+        JwtDTO jwtDTO = new JwtDTO(userId, accessToken, refreshToken);
+
+        return new ResponseDTO<>(200, true, "토큰이 재발급되었습니다.", jwtDTO);
+    }
+
     // 닉네임 변경
     @PatchMapping("/{user_id}")
     public ResponseDTO<UserDTO> changeNickname(@RequestHeader("Authorization") String accessToken,
