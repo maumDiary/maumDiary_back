@@ -175,8 +175,8 @@ public class UserController {
         LocalDate date = requestbody.getDate();
         Color color = userService.saveColor(userId, colorName, date);
 
-        // 사용자 exp 증가, level 업데이트
-        userService.updateLevel(userId);
+        // 사용자 exp 1 증가, level 업데이트
+        userService.updateLevel(userId, 1);
 
         return new ResponseDTO<>(201, true, "색깔이 저장되었습니다.", color);
     }
@@ -290,6 +290,9 @@ public class UserController {
             System.out.println("e.getMassage : " + e.getMessage());
             return new ResponseDTO<>(400, false, "일기가 저장되지 않았습니다.", null);
         }
+
+        // 일기 직접 작성 후 저장 시, exp 2 증가
+        userService.updateLevel(userId, 2);
         return new ResponseDTO<>(200, true, "일기가 저장되었습니다.", diaryDTO);
     }
 

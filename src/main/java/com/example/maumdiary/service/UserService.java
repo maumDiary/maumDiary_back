@@ -109,9 +109,9 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public int updateLevel(Long userId) {
+    public int updateLevel(Long userId, int plusExp) {
         User user = getUserByUserId(userId);
-        user.setExp(user.getExp() + 1);
+        user.setExp(user.getExp() + plusExp);
         int exp = user.getExp();
 
         int level;
