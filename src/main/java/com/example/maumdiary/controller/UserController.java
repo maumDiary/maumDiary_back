@@ -270,8 +270,12 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseDTO<>(400, false, e.getMessage(), null);
         }
+        if (color == null) {
+            return new ResponseDTO<>(400, false, "저장된 색깔이 없습니다.", null);
+        } else {
+            return new ResponseDTO<>(200, true, "색깔을 불러왔습니다.", color);
+        }
 
-        return new ResponseDTO<>(200, true, "색깔을 불러왔습니다.", color);
     }
 
     // Diary 저장
