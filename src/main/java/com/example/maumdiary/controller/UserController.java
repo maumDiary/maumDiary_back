@@ -170,13 +170,15 @@ public class UserController {
             return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
         }
 
+        if (userService.getColor(userId, LocalDate.now()) != null) {
+            // 사용자 exp 1 증가, level 업데이트
+            userService.updateLevel(userId, 1);
+        }
+
         // 색깔 db에 저장
         String colorName = requestbody.getColor_name();
         LocalDate date = requestbody.getDate();
         Color color = userService.saveColor(userId, colorName, date);
-
-        // 사용자 exp 1 증가, level 업데이트
-        userService.updateLevel(userId, 1);
 
         return new ResponseDTO<>(201, true, "색깔이 저장되었습니다.", color);
     }
@@ -289,14 +291,17 @@ public class UserController {
             return new ResponseDTO<>(401, false, "액세스 토큰이 만료되었습니다.", null);
         }
         try {
+            // 경험치 업데이트는 하루에 한 번만 가능
+            if (userService.getDiary(userId, LocalDate.now()) != null) {
+                userService.updateLevel(userId, 2);
+            }
+            // 일기 업데이트
             diaryDTO = userService.saveDiaryContents(userId, content);
         } catch (Exception e) {
             System.out.println("e.getMassage : " + e.getMessage());
             return new ResponseDTO<>(400, false, "일기가 저장되지 않았습니다.", null);
         }
 
-        // 일기 직접 작성 후 저장 시, exp 2 증가
-        userService.updateLevel(userId, 2);
         return new ResponseDTO<>(200, true, "일기가 저장되었습니다.", diaryDTO);
     }
 
