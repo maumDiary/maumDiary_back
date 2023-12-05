@@ -64,9 +64,6 @@ public class ChatgptController {
             return new ResponseDTO<>(400, false, "자동 일기를 쓰는 데 실패하였습니다.", null);
         }
 
-        // exp 1증가, 사용자 업데이트
-        userService.updateLevel(userId, 1);
-
         ChatGptDiaryDTO chatGptDiaryDTO = new ChatGptDiaryDTO(userId, chatGptResponseDto.getCreated(), chatGptResponseDto.getChoices().get(0).getMessage().getContent());
         return new ResponseDTO<>(201, true, "일기를 저장하였습니다.", chatGptDiaryDTO);
     }
