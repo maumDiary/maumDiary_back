@@ -31,7 +31,7 @@ public class ChatgptController {
     @PostMapping("/diary")
     public ResponseDTO<ChatGptDiaryDTO> writingDiary(@RequestHeader("Authorization") String accessToken,
                                                      @RequestParam Long userId) {
-        if (jwtProvider.verify(accessToken)) {
+        if (!jwtProvider.verify(accessToken)) {
             return new ResponseDTO<>(401, false, "토큰이 만료되었습니다.", null);
         }
 
