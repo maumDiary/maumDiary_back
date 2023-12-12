@@ -170,7 +170,7 @@ public class UserController {
             return new ResponseDTO<>(404, false, "사용자 정보가 없습니다.", null);
         }
 
-        if (userService.getColor(userId, LocalDate.now()) != null) {
+        if (userService.getColor(userId, LocalDate.now()) == null) {
             // 사용자 exp 1 증가, level 업데이트
             userService.updateLevel(userId, 1);
         }
@@ -292,7 +292,7 @@ public class UserController {
         }
         try {
             // 경험치 업데이트는 하루에 한 번만 가능
-            if (userService.getDiary(userId, LocalDate.now()) != null) {
+            if (userService.getDiary(userId, LocalDate.now()) == null) {
                 userService.updateLevel(userId, 2);
             }
             // 일기 업데이트
